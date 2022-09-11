@@ -8,7 +8,8 @@ on:
       - main
 
 jobs:
-  Build:
+  Tests:
+   name: Tests
     runs-on: ubuntu-latest
     steps:
       - name: Setup Python
@@ -33,6 +34,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  
+
+  Build:
+      needs: Tests
+      name: Build
+      runs-on: ubuntu-latest
+      steps: 
+
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: New Relic License
+        run: |
+          sed -i "s/licensekey/${{ secrets.NEW_RELIC_LICENSE_KEY }}/g" Dockerfile
 
       - name: Login to Heroku Container registry
         env: 
